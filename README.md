@@ -1,2 +1,0 @@
-# html5_js_ts_canvas
-html5_js_ts_canvas 前端画布学习项目
