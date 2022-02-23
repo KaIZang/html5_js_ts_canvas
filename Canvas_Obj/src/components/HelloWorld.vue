@@ -1,9 +1,19 @@
 <template>
-  <div class="top">Canvas 案例</div>
-  <div class="break-ball">
+  <div class="top">Canvas 案例 ———— 打砖块</div>
+  
+  <div class="break-ball" >
     <canvas id="breakBall" width="900" height="600"></canvas>
-    <div class="container" v-if="gameOver">
-      <div class="dialog">
+    
+    <div class="container" v-if="show">
+      <div class="dialog" v-if="start_game">
+        <!-- <img src="" /> -->
+        <div ></div>
+        <div ></div>
+        <div ></div>
+        <p class="once-again">开始游戏</p>
+        <el-button class="start" type="" @click="startGame" >开始</el-button>
+      </div>
+      <div class="dialog" v-if=" gameOver " >
         <p class="once-again">本轮分数：{{score}}分</p>
         <p class="once-again">真好玩！</p>
         <p class="once-again">再来一次~~</p>
@@ -54,6 +64,8 @@ export default {
       },
       score: 0,
       gameOver: false,
+      start_game: true,
+      show:true,
       breaks: [],
       breaksConfig: {
         row: 6, // 排数
@@ -83,20 +95,23 @@ export default {
       }
       if(key === 13 )
       {
-        
-      _this.init();
+        //回车
+        _this.init();
       }
     };
+    
     document.onkeyup = function(e) {
       _this.pannel.dx = 0;
     };
-    (function animloop() {
-      if (!_this.gameOver) {
+
+    (function animloop() {//闭包
+      if (!_this.gameOver && !_this.start_game) {
         _this.movePannel();
         _this.moveBall();
         _this.drawAll();
       } else {
         _this.drawCrushBreaks();
+
       }
       window.requestAnimationFrame(animloop);
     })();
@@ -109,9 +124,14 @@ export default {
     }
   },
   methods: {
+
+    startGame(){
+      this.start_game = false
+    },
     init() {
       let _this = this;
       _this.gameOver = false;
+
       this.pannel.y = this.clientHeight - this.pannel.height;
       this.pannel.x = this.clientWidth / 2 - this.pannel.width / 2;
       this.ball.y = this.clientHeight / 2;
@@ -138,7 +158,7 @@ export default {
         }
       }
     },
-    //主函数，调用所有动起来
+    //调用所有动起来
     drawAll() {
       this.ctx.clearRect(0, 0, this.clientWidth, this.clientHeight);
       this.drawPannel();
@@ -177,6 +197,8 @@ export default {
             this.score ++ ;
             if(this.showBreaksCount === 0){
               this.gameOver = true;
+              this.start_game = false;
+              this.show = true
             }
           }
         }
@@ -209,6 +231,8 @@ export default {
       ) {
         // 球碰到了底边缘了
         this.gameOver = true;
+        this.start_game = false;
+        this.show = true;
         this.getCurshBreaks();
       }
     },
@@ -252,6 +276,7 @@ export default {
     getRandomArbitrary(min, max) {
       return Math.random() * (max - min) + min;
     },
+    //绘制结束动画
     getCurshBreaks() {
       let _this = this;
       this.breaks.forEach(item => {
@@ -344,11 +369,14 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .top{
-
+  font-size: 28px;
 }
 .break-ball {
     width: 900;
     height: 900;
+    display: flex;
+    margin: auto;
+    width: fit-content;
     position: relative;
 
   #breakBall {
